@@ -1,0 +1,31 @@
+version: 0.2
+
+env:
+  variables:
+    MAVEN_OPTS: "-Dmaven.test.failure.ignore=false"
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto21
+    commands:
+      - echo "Instalando dependencias del proyecto..."
+      - mvn dependency:go-offline
+  pre_build:
+    commands:
+      - echo "Ejecutando análisis de código, pruebas y verificación..."
+      - mvn verify --batch-mode
+  build:
+    commands:
+      - echo "Construyendo el paquete final..."
+      - mvn package -DskipTests --batch-mode
+  post_build:
+    commands:
+      - echo "Build finalizado con éxito."
+artifacts:
+  files:
+    - target/*.jar
+  discard-paths: yes
+cache:
+  paths:
+    - /root/.m2/repository
